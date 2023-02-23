@@ -22,6 +22,7 @@ const saveToken = async token => {
 
 const initCLI = () => {
     const args = getArgs(process.argv);
+
     if (args.h) {
         printHelp();
     }
@@ -36,8 +37,7 @@ const initCLI = () => {
         return saveToken(args.t);
     }
 
-    // pogoda vivod
-    getWeather('Warsaw')
+    getWeather('Kharkiv').then(data => console.log(data));
 };
 
 initCLI();

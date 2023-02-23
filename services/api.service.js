@@ -1,14 +1,29 @@
-import https from 'https';
+// import https from 'https';
+import axios from 'axios';
 import { getKeyValue, TOKEN_DICTIONARY } from './storage.service.js';
 
 const getLatLon = async (city) => {
 
-    const token = await getKeyValue(TOKEN_DICTIONARY.token);
+    const token = process.env.TOKEN ?? await getKeyValue(TOKEN_DICTIONARY.token);
 
     if (!token) {
         throw new Error('Token did not provided use -t [API_KEY]');
     }
 
+    const { data } = await axios.get('https://api.openweathermap.org/geo/1.0/direct', {
+        params: {
+            q: city,
+            appid: token,
+            lang: "en"
+        }
+    });
+    
+    return {
+        lat: data[0].lat,
+        lon: data[0].lon,
+    }
+
+    /**  USING buil-in Node js HTTP library
     const url = new URL('https://api.openweathermap.org/geo/1.0/direct');
     url.searchParams.append('q', city);
     url.searchParams.append('appid', token);
@@ -34,6 +49,7 @@ const getLatLon = async (city) => {
             response.on('error', err => reject(error => console.log(error)));
         });
     });
+    */
 };
 
 
@@ -43,9 +59,22 @@ const getWeather = async (city) => {
     if (!token) {
         throw new Error('Token did not provided use -t [API_KEY]');
     }
-
+    
     const latLon = await getLatLon(city);
 
+    const { data } = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+        params: {
+            lat: latLon.lat,
+            lon: latLon.lon,
+            appid: token,
+            lang: 'en',
+            units: 'metric'
+        }
+    });
+
+    return data;
+
+    /**  USING buil-in Node js HTTP library
     const url = new URL('https://api.openweathermap.org/data/2.5/weather');
     url.searchParams.append('lat', latLon.lat);
     url.searchParams.append('lon', latLon.lon);
@@ -62,6 +91,7 @@ const getWeather = async (city) => {
                 console.log(res);
         });
     });
+    */
 };
 
-export {getWeather, getLatLong};
+export {getWeather, getLatLon};
