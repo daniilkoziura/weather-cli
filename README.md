@@ -5,6 +5,6 @@
 - node weather -t <token>
 
 ***other options***
-        -s [CITY] set city
-        -h  view help
-        -t [API_KEY] set and save token from https://api.openweathermap.org
+- -s [CITY] set city
+-  -h  view help
+-  -t [API_KEY] set and save token from https://api.openweathermap.org
